@@ -213,6 +213,9 @@ class DayView<T extends Object?> extends StatefulWidget {
   /// Emulate vertical line offset from hour line starts.
   final double emulateVerticalOffsetBy;
 
+  /// Set duration for scroll animation of startDate
+  final Duration animationDuration;
+
   /// Main widget for day view.
   const DayView({
     Key? key,
@@ -258,6 +261,7 @@ class DayView<T extends Object?> extends StatefulWidget {
     this.startDuration = const Duration(hours: 0),
     this.onHeaderTitleTap,
     this.emulateVerticalOffsetBy = 0,
+    this.animationDuration = const Duration(milliseconds: 200),
   })  : assert(!(onHeaderTitleTap != null && dayTitleBuilder != null),
             "can't use [onHeaderTitleTap] & [dayTitleBuilder] simultaneously"),
         assert(timeLineOffset >= 0,
@@ -748,7 +752,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
         _currentIndex = index;
       });
     }
-    animateToDuration(widget.startDuration);
+    animateToDuration(widget.startDuration, duration: widget.animationDuration);
     widget.onPageChange?.call(_currentDate, _currentIndex);
   }
 
@@ -868,7 +872,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
   /// Animate to specific offset in a day view using the start duration
   Future<void> animateToDuration(
     Duration startDuration, {
-    Duration duration = const Duration(milliseconds: 200),
+    required Duration duration,
     Curve curve = Curves.linear,
   }) async {
     final offSetForSingleMinute = _height / 24 / 60;
